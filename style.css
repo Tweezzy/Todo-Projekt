@@ -2,6 +2,7 @@
 body{
     font-size: clamp(8px, 3vw, 50px);
     font-family: "Engravers MT";
+    background-color: whitesmoke;
 
 }
 main {
@@ -14,11 +15,13 @@ main {
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: #dadada;
 }
 .center-text {
     font-size: clamp(20px, 3vw, 40px);
     text-align: center;
     font-style: italic;
+    color: rgb(105, 196, 243);
 }
 
 
@@ -94,11 +97,32 @@ input[type="text"]:focus::placeholder {
     font-family: Avenir;
 }
 .ToDoListe {
-    width: clamp(100px, 25vw, 650px);
+    width: clamp(100px, 50vw, 750px);
 }
 #liste {
-    list-style: square;
-}#liste .content {
-    padding-inline-start: 15px;
-    margin-bottom: 15px;
+    display: flex;
+    flex-direction: column-reverse;
+    list-style: circle;
+}
+#liste ul{
+    display: flex;
+    flex-direction: column-reverse;
+}
+ #liste li {
+     padding-inline-start: 10px;
+     margin-bottom: 10px;
+     font-size: 30px;
+     position: relative;
+     cursor: pointer;
+     background-color: rgba(231, 231, 231, 0.85);
  }
+#liste li:hover::before {
+    content: "-";
+    position: absolute;
+    left: -5px;
+}
+#liste li.clicked {
+    text-decoration: line-through;
+    list-style: none;
+    background-color: whitesmoke;
+}
