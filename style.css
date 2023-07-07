@@ -101,14 +101,12 @@ input[type="text"]:focus::placeholder {
 }
 #liste {
     display: flex;
-    flex-direction: column-reverse;
     list-style: circle;
 }
 #liste ul{
     display: flex;
-    flex-direction: column-reverse;
 }
- #liste li {
+.ToDoListe ul {
      padding-inline-start: 10px;
      margin-bottom: 10px;
      font-size: 30px;
@@ -121,7 +119,7 @@ input[type="text"]:focus::placeholder {
     position: absolute;
     left: -5px;
 }
-#liste li.clicked {
+#listeDone li {
     text-decoration: line-through;
     list-style: none;
     background-color: whitesmoke;

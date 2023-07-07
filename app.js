@@ -6,12 +6,17 @@ $(document).ready(function() {
 
         var objectList = [];
 
+
         var timestamp = moment().unix(); // Moment.js-Objekt erstellen, das die aktuelle Zeit darstellt
         // var formattedDate = now.format('DD.MM.YYYY'); // Formatieren des Datums
         console.log(timestamp); // Ausgabe des formatierten Datums in der Konsole
+        console.log(objectList);
+
+        var LocalStorageKey= "TodoListLocal";
+
     //AddTodo
         $(document).ready(function() {
-
+                LoadTodo();
 
 
                 $('#AddButton').click(function() {
@@ -26,6 +31,8 @@ $(document).ready(function() {
 
                 function addToList() {
                         var text = $('#textfeld').val().trim();
+                        console.log('textfeld', $('#textfeld'))
+                        console.log('val', $('#textfeld').val())
                         if (text === '') {
                                 return;
                         }
@@ -42,70 +49,88 @@ $(document).ready(function() {
                         setTimeout(function() {
                                 $('#AddButton').removeClass('clicked');
                         }, 500);
+                        SaveTodo();
                         showTodos();
 
                 }
-
-        //Abgeschlossen
-                $('#liste').on('click', 'li', function() {
-                        $(this).toggleClass('clicked');
-                        sortListItems();
-                });
-
-                function sortListItems() {
-                        var list = $('#liste');
-
-                        var listItems = list.children('li').get();
-
-                        listItems.sort(function(a, b) {
-                                var isAClicked = $(a).hasClass('clicked');
-                                var isBClicked = $(b).hasClass('clicked');
-
-                                if (isAClicked && !isBClicked) {
-                                        return -1; // a nach unten verschieben
-                                } else if (!isAClicked && isBClicked) {
-                                        return 1; // b nach unten verschieben
-                                } else {
-                                        return 0; // Reihenfolge beibehalten
-                                }
-                        });
-
-                        $.each(listItems, function(index, listItem) {
-                                list.append(listItem);
-                        });
-
-                }
                 function showTodos() {
-                        var $liste = $('#liste');
-                        console.log('das ist meine liste', $liste)
-                        $liste.empty();
+                        objectList.sort(function (a, b) {
+                                return b.changed_at - a.changed_at;
+                        });
+                        $('#listeActive').empty();
+                        $('#listeDone').empty();
                         console.log('Alle Werte zusammen', objectList)
                         console.log('Das hat ' + objectList.length + ' Einträge');
                         console.log('Eintag aus der objectList', objectList);
+
+                        var isActive = [];
+                        var isDeactivated = [];
+
+
+
                         objectList.forEach(function(value, index) {
-                                        var $listeElement = $('<li>').text(value.title);
+                            if (value.active === true) {
+                                    isActive.push(value);
+                            } else {
+                                    isDeactivated.push(value);
+                            }
+                        });
 
-                                        $listeElement.on('click', function() {
-                                            console.log('object beim click in der forEAch', value);
-                                            value.active = false;
-                                            value.changed_at = moment().unix();
-                                                console.log('object beim click in der forEAch', value);
-                                                showTodos();
-                                        });
+                        console.log('isActiveList', isActive);
+                        console.log('isDeactived', isDeactivated);
 
+                        isActive.forEach(function(value, index) {
+                            addTodoToList(value);
+                        });
 
-                                        console.log('Boolean von ' + value.title, value.active)
-                                        $('#liste').append($listeElement);
+                        isDeactivated.forEach(function(value, index) {
+                                addTodoToList(value);
                         });
 
 
                 }
 
-                function addActiveElement(element) {
+                function addTodoToList(value) {
+                        var $listeElement = $('<li>').text(value.title);
+                        if (value.active === false) {
+                                $('#listeDone').append($listeElement);
+                        } else {
+                                $('#listeActive').append($listeElement);
+                        }
 
+                        $listeElement.on('click', function() {
+                                console.log('object beim click in der forEAch', value);
+                                value.changed_at = moment().unix();
+                                console.log('object beim click in der forEAch', value);
+                                if (value.active === false) {
+                                        value.active = true;
+                                } else {
+                                        value.active = false;
+                                }
+                                showTodos();
+                                SaveTodo();
+
+                                console.log('neue ObjectList vielleicht mit dem richtigen Wert?', objectList);
+                        });
                 }
 
-                function unactiveElements(element) {
+                function SaveTodo() {
+                        var LocalStorageValue = JSON.stringify(objectList);
+                        localStorage.setItem(LocalStorageKey, LocalStorageValue);
+                }
+
+                function LoadTodo() {
+                        var retrievedValue = localStorage.getItem(LocalStorageKey);
+                        var retrievedArray = JSON.parse(retrievedValue);
+                        if (Array.isArray(retrievedArray)) {
+                                objectList = retrievedArray;
+                        }
+                        showTodos();
+
+                        console.log("Array",retrievedArray);
+                        console.log("Value",retrievedValue);
+                        console.log(objectList);
+
 
                 }
         });
