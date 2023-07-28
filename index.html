@@ -5,41 +5,49 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ToDo</title>
     <link rel="stylesheet" type="text/css" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="node_modules/moment/moment.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="app.js"></script>
 </head>
 <body>
 
-<header>
-<div class="container">
-    <div class="center-text">
-        <h1>ToDo</h1>
-    </div>
-</div>
-</header>
+    <header>
+        <div class="container">
+            <div class="center-text">
+                <h1>ToDo</h1>
+            </div>
+        </div>
+    </header>
 
-<main>
-<div class="container-eingabe">
-    <div class="Textfeld">
-        <input type="text" id="textfeld" placeholder="Neue Aufgabe?">
-    </div>
-    <div class="containerButton">
-        <button id="AddButton">+</button>
-    </div>
-</div>
+    <main>
+        <div class="container-eingabe">
+            <div class="Textfeld">
+                <input type="text" id="textfeld" placeholder="Neue Aufgabe?">
+            </div>
+            <div class="containerButton">
+                <button id="AddButton">+</button>
+            </div>
+        </div>
 
-<div class="containerToDo">
-    <div class="ToDoListe">
-        <ul id="listeActive">
+        <div class="containerToDo">
+            <div class="ToDoListe">
+                <ul id="listeActive">
 
-        </ul>
-        <ul id="listeDone">
+                </ul>
+                <ul id="listeDone">
 
-        </ul>
-    </div>
-</div>
-</main>
+                </ul>
+            </div>
+        </div>
+        <div id="popup" class="popup">
+            <div class="popup-content">
+                <span class="close-btn" id="closeBtn">&times;</span>
+                <h2>Wirklich löschen?</h2>
+                <p><button class="abfrageButton" id="yesButton">Ja</button><button class="abfrageButton" id="noButton">Nein</button></p>
+            </div>
+        </div>
+    </main>
 
 </body>
 </html>
