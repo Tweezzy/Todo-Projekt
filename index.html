@@ -15,12 +15,15 @@
     <header>
         <div class="container">
             <div class="center-text">
-                <h1>ToDo</h1>
+                <h1 id="Todo-Archived">ToDo</h1>
             </div>
+        </div>
+        <div class="ArchivedButton">
+            <button id="archButton">< ToDo ></button>
         </div>
     </header>
 
-    <main>
+    <main class="Main">
         <div class="container-eingabe">
             <div class="Textfeld">
                 <input type="text" id="textfeld" placeholder="Neue Aufgabe?">
@@ -30,20 +33,13 @@
             </div>
         </div>
 
-        <div class="containerToDo">
-            <div class="ToDoListe">
-                <ul id="listeActive">
+        <div id="ToDoContainer" class="containerToDo">
 
-                </ul>
-                <ul id="listeDone">
-
-                </ul>
-            </div>
         </div>
         <div id="popup" class="popup">
             <div class="popup-content">
                 <span class="close-btn" id="closeBtn">&times;</span>
-                <h2>Wirklich löschen?</h2>
+                <h2 id="Abfrage">Wirklich löschen?</h2>
                 <p><button class="abfrageButton" id="yesButton">Ja</button><button class="abfrageButton" id="noButton">Nein</button></p>
             </div>
         </div>

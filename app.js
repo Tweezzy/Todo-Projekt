@@ -4,6 +4,8 @@ $(document).ready(function () {
 
     var clickedID;
     var objectList = [];
+    let $ToDoContainer = $('#ToDoContainer');
+    let isModeArchived = false;
     // var objectToDelete;
 
     var timestamp = moment().unix();
@@ -23,13 +25,29 @@ $(document).ready(function () {
             addToList();
         }
     });
+    $('#archButton').click(function () {
+        let $archButton = document.getElementById("archButton")
+
+        if (!isModeArchived) {
+            showArchived();
+            $('#archButton').addClass('clicked')
+            $archButton.textContent = "< Archiv >";
+            isModeArchived = !isModeArchived;
+        } else {
+            showTodos();
+            $('#archButton').removeClass('clicked')
+            $archButton.textContent = "< ToDo >";
+            isModeArchived = !isModeArchived;
+        }
+    });
+
 
     function addToList() {
         var text = $('#textfeld').val().trim();
         if (text === '') {
             return;
         }
-
+        isModeArchived = false;
         var timestamp = moment().unix();
         // Hier kommt noch ein Attribut zum Objekt dazu (archived). Damit kannst du dann prüfen, ob der Eintrag
         // bereits gelöscht wurde oder nicht.
@@ -52,11 +70,23 @@ $(document).ready(function () {
     }
 
     function showTodos() {
+        // Remove list
+        $ToDoContainer.empty();
+        let $Heading = $('#Todo-Archived');
+        $Heading.text('ToDo');
+        $Heading.removeClass('archived-heading');
+        $('.container').removeClass('archived-container')
+
+        $('.container-eingabe').show();
+
+        let $ToDoListe = $('<div class="ToDoListe"></div>');
+        $ToDoListe.append('<ul id="listeActive"></ul>').append('<ul id="listeDone"></ul>');
+
+        $ToDoContainer.append($ToDoListe);
+
         objectList.sort(function (a, b) {
             return b.changed_at - a.changed_at;
         });
-        $('#listeActive').empty();
-        $('#listeDone').empty();
 
         var isActive = [];
         var isDeactivated = [];
@@ -77,6 +107,105 @@ $(document).ready(function () {
         isDeactivated.forEach(function (value, index) {
             addTodoToList(value);
         });
+
+        console.log("isActive:", isActive);
+
+    }
+
+    function showArchived(value) {
+        // ToDoContainer wird geleert
+        $ToDoContainer.empty();
+
+        let $Heading = $('#Todo-Archived');
+        $Heading.text('Archived');
+        $Heading.addClass('archived-heading');
+        $('.container').addClass('archived-container')
+
+
+        $('.container-eingabe').hide();
+
+        // var $listeElement = $('<li>').text(value.title);
+        // $listeElement.data('id', value.id);
+
+        // Füge neues Element zur Liste inklusive dem Listen-Container
+        let $ToDoListe = $('<div class="ToDoListe"></div>');
+        $ToDoListe.append('<ul id="listeArchived"></ul>');
+
+        //Element in Hauptcontainer einfügen
+        $ToDoContainer.append($ToDoListe);
+
+        // Sortieren
+        objectList.sort(function (a, b) {
+            return b.changed_at - a.changed_at;
+        });
+
+        // Iteriere über die Elemente des Arrays
+        objectList.forEach(function (value, index) {
+            // gehe in function addArchivedToList falls das object archiviert wurde
+            if (value.archived) {
+                addArchivedToList(value);
+            }
+        });
+
+    };
+
+    function addArchivedToList(value) {
+        // Hier direkt am Anfang auf archived prüfen und einfach einen "return;" machen, falls "archived === false"
+        // Dann wird das Element nicht in die Liste übernommen.
+
+        // Baue Listenelement und füge den Titel und die ID hinzu
+        var $listeElement = $('<li>').text(value.title);
+        $listeElement.data('id', value.id);
+        $listeElement.addClass('archived-liste');
+
+        // Neuer Button für den Delete -  Muss jetzt aber ein anderes Icon bekommen.
+        // Hier könnte die Rücknahme von Archived passieren!!!!!!!!!
+        let $button = $('<button id="openBtn">');
+        $button.append('<i class="fas fa-trash-alt"></i>');
+        $listeElement.append($button);
+        $button.hide();
+
+        let $Abfrage = $('#Abfrage');
+        $Abfrage.text('Wiederhinzufügen');
+
+        $button.on('click', function (event) {
+            clickedID = $button.parent().data('id');
+            event.stopPropagation();
+            $('#popup').show();
+
+
+            $('#closeBtn').on('click', function () {
+                $('#popup').hide();
+            });
+        });
+
+        $('#noButton').on('click', function () {
+            $('#popup').hide();
+        });
+        $('#yesButton').on('click', function () {
+            objectList.forEach(entry => {
+                if (clickedID === entry.id) {
+                    entry.archived = false;
+                }
+            });
+            SaveTodo();
+            showArchived();
+            $('#popup').hide();
+
+        });
+
+        $listeElement.hover(
+            function () {
+                $button.show();
+            },
+            function () {
+                $button.hide();
+            }
+        );
+
+        // Füge Listenelement in Archived
+        $('#listeArchived').append($listeElement);
+
     }
 
     function addTodoToList(value) {
@@ -85,6 +214,10 @@ $(document).ready(function () {
         if (value.archived) {
             return;
         }
+
+        let $Abfrage = $('#Abfrage');
+        $Abfrage.text('Wirklich Löschen?');
+
         var $listeElement = $('<li>').text(value.title);
         $listeElement.data('id', value.id);
 
@@ -104,14 +237,14 @@ $(document).ready(function () {
             });
         });
 
-        // Hier liegt das Problem dass alle Einträge auf archived === true gesetzt werden. Wenn man eine ID (#yesButton)
-        // aufruft und einen click handler setzt, werden wohl sämtliche Einträge verarbeitet. Daher würde ich eher
-        // dazu raten,
+        $('#noButton').on('click', function () {
+            $('#popup').hide();
+        });
         $('#yesButton').on('click', function () {
             objectList.forEach(entry => {
-               if (clickedID === entry.id) {
-                   entry.archived = true;
-               }
+                if (clickedID === entry.id) {
+                    entry.archived = true;
+                }
             });
             // Am besten hier direkt mit der variable "value" arbeiten und auf "archived = false" setzen. Dann kannst
             // ganz einfach beim addTodoToList() auf das archived achten und die, die archived = false sind, erst gar
@@ -143,6 +276,8 @@ $(document).ready(function () {
             }
         );
 
+        // Füge Listenelement in Archived
+        $('#listeArchived').append($listeElement);
         if (value.active === false) {
             $('#listeDone').append($listeElement);
         } else {
@@ -185,4 +320,18 @@ $(document).ready(function () {
             return v.toString(16);
         });
     }
+
+    function animate() {
+        const element = $('#archButton')
+        let position = 0;
+
+        position += 1;
+        element.style = position + 'px';
+
+        if (position < 200) {
+            requestAnimationFrame(animate)
+        }
+    }
+    animate();
+
 });
