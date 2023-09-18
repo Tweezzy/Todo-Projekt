@@ -1,3 +1,5 @@
+import Database from './database.js';
+
 $(document).ready(function () {
 
     var todoList = [];
@@ -305,11 +307,8 @@ $(document).ready(function () {
     }
 
     function LoadTodo() {
-        var retrievedValue = localStorage.getItem(LocalStorageKey);
-        var retrievedArray = JSON.parse(retrievedValue);
-        if (Array.isArray(retrievedArray)) {
-            objectList = retrievedArray;
-        }
+        let database = new Database();
+        objectList = database.load();
         showTodos();
     }
 
