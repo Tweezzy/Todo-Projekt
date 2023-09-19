@@ -110,8 +110,6 @@ $(document).ready(function () {
             addTodoToList(value);
         });
 
-        console.log("isActive:", isActive);
-
     }
 
     function showArchived(value) {
@@ -287,7 +285,6 @@ $(document).ready(function () {
         }
 
         $listeElement.on('click', function () {
-            console.log('object beim click in der forEAch', value);
             value.changed_at = moment().unix();
             if (value.active === false) {
                 value.active = true;
@@ -301,9 +298,9 @@ $(document).ready(function () {
     }
 
     function SaveTodo() {
-        console.log('speichern der ObjectListe', objectList);
-        var LocalStorageValue = JSON.stringify(objectList);
-        localStorage.setItem(LocalStorageKey, LocalStorageValue);
+        let database = new Database();
+        database.save(objectList);
+
     }
 
     function LoadTodo() {
@@ -319,18 +316,5 @@ $(document).ready(function () {
             return v.toString(16);
         });
     }
-
-    function animate() {
-        const element = $('#archButton')
-        let position = 0;
-
-        position += 1;
-        element.style = position + 'px';
-
-        if (position < 200) {
-            requestAnimationFrame(animate)
-        }
-    }
-    animate();
 
 });

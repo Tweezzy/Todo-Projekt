@@ -4,7 +4,6 @@ class Database {
     constructor() {}
 
     load() {
-        console.log('bin in der datenbank klasse und lade Daten');
         var retrievedValue = localStorage.getItem(this.LocalStorageKey);
         var retrievedArray = JSON.parse(retrievedValue);
         if (Array.isArray(retrievedArray)) {
@@ -12,8 +11,9 @@ class Database {
         }
     }
 
-    save() {
-
+    save(objectList) {
+        var LocalStorageValue = JSON.stringify(objectList);
+        localStorage.setItem(this.LocalStorageKey, LocalStorageValue);
     }
 }
 
